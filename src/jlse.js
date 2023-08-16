@@ -8,12 +8,6 @@ const argv = require("yargs")
     type: "string",
     describe: "path to ts file"
   })
-  .option("run_command", {
-    choices: ["all", "chapter_exe", "logoframe", "join_logo_scp", "ffmpeg"],
-    default: "all",
-    type: "array",
-    describe: "slect run command"
-  })
   .option("filter", {
     alias: "f",
     type: "boolean",
@@ -31,6 +25,12 @@ const argv = require("yargs")
     choices: ["cutcm", "cutcm_logo"],
     default: "cutcm_logo",
     describe: "select encord target"
+  })
+  .option("gioption", {
+    alias: "g",
+    type: "string",
+    default: "",
+    describe: "set ffmpeg global/input options"
   })
   .option("option", {
     alias: "o",
@@ -122,23 +122,17 @@ const main = async () => {
     avsFile = createAvs(INPUT_AVS, TSDIVIDER_OUTPUT, -1);
   };
 
-  if(argv.run_command.includes("all") || argv.run_command.includes("chapter_exe")){
-    await chapterexe(avsFile);
-  }
+  await chapterexe(avsFile);
+  await logoframe(param, channel, avsFile);
+  await joinlogoframe(param);
 
-  if(argv.run_command.includes("all") || argv.run_command.includes("logoframe")){
-    await logoframe(param, channel, avsFile);
-  }
+  await createOutAvs(avsFile);
+  await createChapter(settings);
 
-  if(argv.run_command.includes("all") || argv.run_command.includes("join_logo_scp")){
-    await joinlogoframe(param);
-    await createOutAvs(avsFile);
-    await createChapter(settings);
-    if(argv.filter) {createFilter(inputFile, OUTPUT_AVS_CUT, OUTPUT_FILTER_CUT); }
-  }
+  if(argv.filter) {createFilter(inputFile, OUTPUT_AVS_CUT, OUTPUT_FILTER_CUT); }
 
-  if(argv.encode && (argv.run_command.includes("all") || argv.run_command.includes("ffmpeg"))) {
-    encode(argv.outdir? argv.outdir : inputFileDir, argv.outname? argv.outname : inputFileName, argv.target, argv.option);
+  if(argv.encode) {
+    encode(argv.outdir? argv.outdir : inputFileDir, argv.outname? argv.outname : inputFileName, argv.target, argv.gioption, argv.option);
   }
   if(argv.remove) {
     fs.removeSync(SAVE_DIR);
