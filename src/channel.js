@@ -18,13 +18,13 @@ exports.parse = filepath => {
     const recognize = jaconv.normalize(channel.recognize);
     const short = jaconv.normalize(channel.short);
 
-    // 放送局名（認識用）：ファイル名先頭または" _"の後（優先度1）
-    let regexp = new RegExp(`^${recognize}| _${recognize}`);
+    // 放送局名（認識用）：ファイル名先頭または"_"の後（優先度1）
+    let regexp = new RegExp(`^${recognize}|_${recognize}|@${recognize}`);
     let match = filename.match(regexp);
     if (match) {
       return channel;
     }
-
+    
     // 放送局略称       ：ファイル名の先頭、_の後または括弧の後で、略称直後は空白か括弧か"_"（優先度1）
     regexp = new RegExp(`^${short}[_\s]| _${short}| [(〔[{〈《｢『【≪]${short}[)〕\\]}〉》｣』】≫ _]`);
     match = filename.match(regexp);

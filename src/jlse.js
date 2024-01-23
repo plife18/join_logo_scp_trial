@@ -61,11 +61,11 @@ const argv = require("yargs")
     "Please provide input arguments to work with this tool"
   )
   .check(function(argv) {
-    const ext = path.extname(argv.input);
-    if (ext !== ".ts") {
-      console.error(`invalid file extension ${ext}.`);
-      return false;
-    }
+    //const ext = path.extname(argv.input);
+    //if (ext !== ".ts") {
+    //  console.error(`invalid file extension ${ext}.`);
+    //  return false;
+    //}
 
     try {
       fs.statSync(argv.input);
